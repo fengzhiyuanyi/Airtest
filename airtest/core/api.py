@@ -216,6 +216,14 @@ def snapshot(filename=None, msg=""):
         return try_log_screen()
 
 
+def coor(data):
+    """
+    坐标定位
+    :param data: 坐标数据
+    :return:
+    """
+    G.DEVICE.coor(data)
+
 @logwrap
 def wake():
     """

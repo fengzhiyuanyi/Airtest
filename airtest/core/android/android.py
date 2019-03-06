@@ -5,6 +5,7 @@ import time
 import warnings
 from copy import copy
 from airtest import aircv
+from airtest.core.android.coor import Coor
 from airtest.utils.logger import get_logger
 from airtest.core.device import Device
 from airtest.core.android.ime import YosemiteIme
@@ -47,6 +48,7 @@ class Android(Device):
         self.minitouch = Minitouch(self.adb, ori_function=self.get_display_info)
         self.yosemite_ime = YosemiteIme(self.adb)
         self.recorder = Recorder(self.adb)
+        self.coor = Coor()
         self._register_rotation_watcher()
 
     def get_default_device(self):
@@ -171,6 +173,14 @@ class Android(Device):
 
         """
         return self.adb.install_app(filepath, replace=replace)
+
+    def current_app(self):
+        """
+        query for current running app info
+
+        :return: dict(package, activity, pid?)
+        """
+        return self.adb.current_app()
 
     def install_multiple_app(self, filepath, replace=False):
         """
@@ -435,6 +445,9 @@ class Android(Device):
         """
         return self.adb.get_top_activity()
 
+    def get_top_pid(self):
+        return self.adb.get_top_pid()
+
     def get_top_activity_name_and_pid(self):
         dat = self.adb.shell('dumpsys activity top')
         activityRE = re.compile('\s*ACTIVITY ([A-Za-z0-9_.]+)/([A-Za-z0-9_.]+) \w+ pid=(\d+)')
@@ -586,6 +599,15 @@ class Android(Device):
 
         """
         return self.recorder.stop_recording(*args, **kwargs)
+
+    def start_coord(self):
+        return self.coor.start_coor()
+
+    def stop_coord(self):
+        return self.coor.stop_coor()
+
+    def coor(self, data):
+        return self.coor.coor(data)
 
     def _register_rotation_watcher(self):
         """

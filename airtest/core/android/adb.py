@@ -1012,6 +1012,26 @@ class ADB(object):
         else:
             raise AirtestError("Can not get top activity, output:%s" % dat)
 
+    def get_top_pid(self):
+        """
+        Perform `adb shell dumpsys activity top` command search for the top activity
+
+        Raises:
+            AirtestError: if top activity cannot be obtained
+
+        Returns:
+            top activity as a tuple
+
+        """
+        dat = self.shell('dumpsys activity top')
+        activityRE = re.compile('\s*ACTIVITY [A-Za-z0-9_.]+/[A-Za-z0-9_.]+ \w+ pid=(\d+)')
+        # in Android8.0 or higher, the result may be more than one
+        m = activityRE.findall(dat)
+        if m:
+            return m[-1]
+        else:
+            raise AirtestError("Can not get top activity, output:%s" % dat)
+
     def is_keyboard_shown(self):
         """
         Perform `adb shell dumpsys input_method` command and search for information if keyboard is shown
